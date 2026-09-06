@@ -1,0 +1,15 @@
+# Working files — never published.
+# content.md and README.md hold internal notes (unresolved dates, privacy
+# decisions, candid review comments). _removed/ holds the CV page and PDF that
+# were deliberately withdrawn. _preview/ is the palette comparison.
+content.md
+README.md
+_removed/
+_preview/
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+*.bak
+*~

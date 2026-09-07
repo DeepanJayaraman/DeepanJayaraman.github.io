@@ -355,6 +355,86 @@
       }
     }
 
+    /* ---------- technical-stack hub: hover an area, list its tools beside it ---------- */
+    var stackHub = document.getElementById("stack-hub");
+    if (stackHub) {
+      var sdPop  = document.getElementById("stack-detail");
+      var sdWrap = sdPop.parentNode;
+      var sdHead = document.getElementById("stack-detail-h");
+      var sdList = document.getElementById("stack-detail-list");
+      var sdHint = document.getElementById("stack-detail-hint");
+      var sdNodes = Array.prototype.slice.call(stackHub.querySelectorAll(".st-node"));
+      var sdArrows = Array.prototype.slice.call(stackHub.querySelectorAll(".st-arrow"));
+
+      function stackPlace(node) {
+        var card = node.querySelector(".st-card");
+        var c = card.getBoundingClientRect();
+        var w = sdWrap.getBoundingClientRect();
+        var pw = sdPop.offsetWidth, ph = sdPop.offsetHeight;
+        var cardLeft = c.left - w.left, cardTop = c.top - w.top;
+        var onLeftHalf = (c.left + c.width / 2) < (w.left + w.width / 2);
+
+        /* sit directly under the card, edge-aligned with it, so it reads as that card's list;
+           there is no room outside the columns, and this never lands on top of the hub */
+        var x = onLeftHalf ? cardLeft : cardLeft + c.width - pw;
+        x = Math.max(0, Math.min(x, w.width - pw));
+
+        /* prefer below; flip above only when there is real room there.
+           A tall list may run past the figure — that is fine, it floats over what follows;
+           clamping it to the figure would drop it on top of its own card. */
+        var below = cardTop + c.height + 12;
+        var above = cardTop - ph - 12;
+        var y = (below + ph <= w.height || above < 0) ? below : above;
+        if (y < 0) y = 0;
+
+        sdPop.style.left = Math.round(x) + "px";
+        sdPop.style.top  = Math.round(y) + "px";
+      }
+
+      function stackShow(node, area) {
+        var h3 = area && document.getElementById(area);
+        if (!h3) return;
+        var ul = h3.nextElementSibling;                    /* the pill-list is the source of truth */
+        var items = ul ? Array.prototype.slice.call(ul.querySelectorAll("li")) : [];
+        sdHead.textContent = h3.textContent;
+        sdList.innerHTML = "";
+        items.forEach(function (li) {
+          var el = document.createElement("li");
+          var ico = li.querySelector(".pill-ico");          /* carry the tool's icon across */
+          if (ico) el.appendChild(ico.cloneNode(true));
+          el.appendChild(document.createTextNode(li.textContent));
+          sdList.appendChild(el);
+        });
+        sdHint.textContent = items.length + (items.length === 1 ? " tool" : " tools");
+        sdPop.setAttribute("data-show", "1");
+        stackPlace(node);
+        stackHub.setAttribute("data-active", area);
+        sdNodes.forEach(function (n) {
+          n.setAttribute("data-on", n.getAttribute("data-area") === area ? "1" : "0");
+        });
+        sdArrows.forEach(function (a) {
+          a.classList.toggle("on", a.getAttribute("data-area") === area);
+        });
+      }
+
+      function stackReset() {
+        sdPop.removeAttribute("data-show");
+        stackHub.removeAttribute("data-active");
+        sdNodes.forEach(function (n) { n.removeAttribute("data-on"); });
+        sdArrows.forEach(function (a) { a.classList.remove("on"); });
+      }
+
+      sdNodes.forEach(function (node) {
+        var area = node.getAttribute("data-area");
+        /* SVG <g> does not dispatch focus events, so this is hover/tap only —
+           the pill lists below carry the same content for keyboard and screen readers. */
+        node.addEventListener("mouseenter", function () { stackShow(node, area); });
+        node.addEventListener("click", function () { stackShow(node, area); });
+      });
+      stackHub.addEventListener("mouseleave", stackReset);
+      window.addEventListener("resize", stackReset);
+    }
+
     /* ---------- current year ---------- */
     var y = document.getElementById("year");
     if (y) y.textContent = new Date().getFullYear();

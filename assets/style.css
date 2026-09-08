@@ -1,3 +1,23 @@
+/* ---------- webfonts (self-hosted, SIL OFL) ----------
+   EB Garamond for headings, DM Sans for text — the pairing used on
+   facweb.iitkgp.ac.in/~ahota. Variable files, latin subset only. */
+@font-face {
+  font-family: 'DM Sans'; font-style: normal; font-weight: 400 700;
+  font-display: swap; src: url(fonts/dmsans-var.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'DM Sans'; font-style: italic; font-weight: 400 700;
+  font-display: swap; src: url(fonts/dmsans-var-italic.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'EB Garamond'; font-style: normal; font-weight: 400 700;
+  font-display: swap; src: url(fonts/ebgaramond-var.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'EB Garamond'; font-style: italic; font-weight: 400 700;
+  font-display: swap; src: url(fonts/ebgaramond-var-italic.woff2) format('woff2');
+}
+
 /* ==========================================================================
    Deepan Jayaraman — personal academic site
    Hand-written CSS. No framework, no build step.
@@ -20,8 +40,8 @@
   --quote-bar:#96a0b0;
   --shadow:   0 1px 2px rgba(20,26,38,.05), 0 10px 28px rgba(20,26,38,.08);
 
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, serif;
-  --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: "EB Garamond", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans:  "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   --measure: 68ch;
@@ -414,7 +434,7 @@ figure.diagram figcaption {
 .dg-label-key { fill: var(--accent); font-family: var(--sans); font-size: 13px; font-weight: 600; }
 .dg-line { stroke: var(--faint); fill: none; }
 .dg-line-accent { stroke: var(--accent); fill: none; }
-.dg-hub { fill: url(#hubGrad); }
+.dg-hub { fill: var(--accent); }
 .dg-hub-text { fill: #fff; font-family: var(--sans); font-size: 13px; font-weight: 600; }
 [data-theme="dark"] .dg-hub-text { fill: #0f1216; }
 
@@ -665,7 +685,7 @@ figure.diagram figcaption {
 #domain-hub .dg-node[data-on="1"] rect {
   fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6;
 }
-.dg-hub { fill: url(#hubGrad); }
+.dg-hub { fill: var(--accent); }
 .dg-hub-text { fill: #fff; }
 [data-theme="dark"] .dg-hub-text { fill: #12161f; }
 
@@ -681,8 +701,8 @@ figure.diagram figcaption {
   --wrap: 1260px;
   --side: 236px;
   --measure: 100%;          /* content column already sets the measure */
-  --fs:      17px;          /* the one body size */
-  --fs-small: 14.5px;       /* the one meta/label size */
+  --fs:      16px;          /* the one body size */
+  --fs-small: 12.5px;       /* the one meta/label size */
 }
 
 /* ---------- two-column page shell ---------- */
@@ -745,7 +765,7 @@ figure.diagram figcaption {
 .hero { padding: 2.2rem 0 1.2rem; background: none; }
 .hero-grid { display: block; }
 @media (min-width: 880px) { .hero-grid { grid-template-columns: 1fr; } }
-.page .hero h1 { font-size: 2.5rem; }
+.page .hero h1 { font-size: 2.2rem; }
 
 /* ---------- one fixed type scale ---------- */
 body { font-size: var(--fs); }
@@ -767,7 +787,7 @@ figure.diagram figcaption, .pill-list li, .stack li, p, li {
 }
 
 /* headings: fixed, not fluid */
-h1 { font-size: 2.5rem; }
+h1 { font-size: 2.2rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: var(--fs); font-weight: 600; }
 .positioning, .theme-spine { font-size: 1.22rem; }
@@ -795,7 +815,7 @@ section { padding: 1.35rem 0; }
   content: " ↗"; color: var(--faint); font-size: .8em; vertical-align: .08em;
 }
 
-.page-title { margin-top: 2.4rem; font-size: 2.5rem; }
+.page-title { margin-top: 2.4rem; font-size: 2.2rem; }
 @media (max-width: 620px) { .page-title { font-size: 2rem; } }
 
 /* the interactive figures need a real minimum width; give the detail panel a fixed
@@ -1425,3 +1445,37 @@ figure.diagram figcaption,
 :root:not([data-theme="light"]) { }
 [data-theme="dark"] { --eng-soft: #2e2415; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --eng-soft: #2e2415; } }
+
+/* ---------- sectional panels ----------
+   Each section sits in its own card on the page ground. Three distinct
+   levels: page < panel < card, so nested cards stay visible in both themes. */
+:root { --panel: #ffffff; }
+[data-theme="dark"] { --panel: #171d27; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --panel: #171d27; } }
+
+.page-body > section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.5rem 1.7rem 1.6rem;
+  margin: 0 0 1.15rem;
+}
+/* the page title is a masthead, not a panel */
+.page-body > section:has(.page-title) {
+  background: none; border: 0; border-radius: 0;
+  padding: .4rem 0 0; margin-bottom: .5rem;
+}
+/* the heading rule already lives in .section-head; tighten it to the panel */
+.page-body > section > .section-head:first-child { margin-top: 0; }
+
+@media (max-width: 700px) {
+  .page-body > section { padding: 1.15rem 1.15rem 1.25rem; border-radius: 12px; }
+}
+
+/* small-text floor: nothing meaningful below 13px (IITM sets 14px) */
+.card-areas .area { font-size: 11.5px; }
+.card-stack li { font-size: 12.5px; }
+.card-areas .alab { font-size: 11px; }
+.pill-list li:has(.pill-ico), .pill-list li { font-size: 12.5px; }
+.pill-ico { width: 14px; height: 14px; flex: 0 0 14px; }
+.card-stack .pill-ico { width: 13px; height: 13px; flex: 0 0 13px; }
